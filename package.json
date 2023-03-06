@@ -7,7 +7,7 @@
         "dev": "vite --port 3000",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "jest": "jest",
+        "jest": "jest --passWithNoTests",
         "jest:watch": "jest --watch",
         "typecheck": "tsc --noEmit",
         "lint": "eslint --ext .tsx,.ts,.jsx,.js src/",
