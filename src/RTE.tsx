@@ -1,9 +1,9 @@
-import { Anchor, Box, Overlay, Switch } from '@mantine/core';
+import { Anchor, Box, Overlay, Paper, Switch, Text } from '@mantine/core';
 import { RichTextEditor } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
-import ImageNodeView from './core/image/components/ImageNodeView';
+import Image from './core/image';
 import RTEControls from './RTEControls';
 import { useStyles } from './RTE.styles';
 import { useDisclosure } from '@mantine/hooks';
@@ -12,13 +12,14 @@ const RTE = () => {
     const editor = useEditor({
         extensions: [
             StarterKit,
-            ImageNodeView,
+            Image.Extension,
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
         ],
         content: `
-            <p>hello</p>
-            <img />
-            <p>world</p>
+            <p>resizable image with responsive style</p>
+            <img src="/nails.png" data-image-component='true' data-responsive='true' />
+            <p>normal resizable image</p>
+            <img src="/nails.png" width="300" height="200" data-image-component='true' />
         `,
     });
     const [showHtml, { toggle }] = useDisclosure();
@@ -27,9 +28,16 @@ const RTE = () => {
 
     return (
         <Box p={10}>
-            <Switch onClick={toggle} />
             <Box pos='relative'>
-                <RichTextEditor editor={editor} classNames={classes}>
+                <RichTextEditor
+                    editor={editor}
+                    classNames={classes}
+                    styles={{
+                        content: {
+                            overflowX: 'auto',
+                        },
+                    }}
+                >
                     <RichTextEditor.Toolbar>
                         <RTEControls />
                     </RichTextEditor.Toolbar>
@@ -38,7 +46,24 @@ const RTE = () => {
                 </RichTextEditor>
                 {showHtml && <Overlay />}
             </Box>
-            {showHtml && <Box sx={{ wordBreak: 'break-word' }}>{editor?.getHTML()}</Box>}
+            <Switch onClick={toggle} label='Show HTML string' />
+            {showHtml && (
+                <>
+                    <Text>Raw HTML:</Text>
+                    <Paper sx={{ wordBreak: 'break-word' }} withBorder p={10}>
+                        {editor?.getHTML()}
+                    </Paper>
+                </>
+            )}
+            <Text>Result:</Text>
+            <Paper
+                dangerouslySetInnerHTML={{
+                    __html: editor?.getHTML() || '',
+                }}
+                className={classes.content}
+                withBorder
+                p={10}
+            />
             <Anchor href='https://tiptap.dev/guide/node-views#render-java-scriptvuereact'>
                 https://tiptap.dev/guide/node-views#render-java-scriptvuereact
             </Anchor>

@@ -4,6 +4,8 @@ export const useStyles = createStyles(() => ({
     content: {
         'p:has(span.node-imageComponent)': {
             display: 'flex',
+            flexWrap: 'wrap',
+            wordBreak: 'break-word',
             '&[style*="text-align: center"]': {
                 justifyContent: 'center',
             },

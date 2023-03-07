@@ -6,7 +6,8 @@ const RTEControls = () => {
     return (
         <>
             <RichTextEditor.ControlsGroup>
-                <Image.Controls />
+                <Image.Controls title='Insert responsive image' />
+                <Image.Controls isResponsive={false} title='Insert normal image' />
                 <RichTextEditor.AlignLeft />
                 <RichTextEditor.AlignCenter/>
                 <RichTextEditor.AlignRight />
