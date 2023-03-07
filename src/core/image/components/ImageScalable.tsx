@@ -3,6 +3,7 @@ import { useClickOutside } from '@mantine/hooks';
 import { NodeViewRendererProps, NodeViewWrapper } from '@tiptap/react';
 import { useState } from 'react';
 import Moveable from 'react-moveable';
+import { scalableImageComponentDataAttributes } from './ImageExtension';
 
 interface Props extends NodeViewRendererProps {
     updateAttributes({
@@ -16,7 +17,9 @@ interface Props extends NodeViewRendererProps {
 
 const ImageScalable = (props: Props) => {
     const [isImageFocused, setIsImageFocused] = useState(false);
-    const imageRef = useClickOutside<HTMLDivElement>(() => setIsImageFocused(false));
+    const imageRef = useClickOutside<HTMLDivElement>(() =>
+        setIsImageFocused(false)
+    );
     const [{ width, height }, setContainerRect] = useState({
         width: props.node.attrs.width as number,
         height: props.node.attrs.height as number,
@@ -35,6 +38,10 @@ const ImageScalable = (props: Props) => {
         >
             <Image
                 {...props.node.attrs}
+                imageProps={{
+                    width: width,
+                    height: height,
+                }}
                 withPlaceholder
                 ref={imageRef}
                 onClick={() => setIsImageFocused(true)}
@@ -43,7 +50,11 @@ const ImageScalable = (props: Props) => {
             <Moveable
                 target={isImageFocused ? imageRef : null}
                 scalable={true}
-                keepRatio={false}
+                keepRatio={
+                    props.node.attrs[
+                        scalableImageComponentDataAttributes.DATA_RESPONSIVE
+                    ] === 'true'
+                }
                 origin={false}
                 throttleScale={0}
                 renderDirections={['se']}

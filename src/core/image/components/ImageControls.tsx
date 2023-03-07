@@ -1,9 +1,14 @@
-import { RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
+import { RichTextEditor, RichTextEditorControlProps, useRichTextEditorContext } from '@mantine/tiptap';
 import { IconPhotoPlus } from '@tabler/icons-react';
 import { useRef } from 'react';
 import imageService from '../image.service';
+import { scalableImageComponentDataAttributes } from './ImageExtension';
 
-const ImageControl = () => {
+interface Props extends RichTextEditorControlProps {
+    isResponsive?: boolean;
+}
+
+const ImageControl = ({ isResponsive = true, ...props }: Props) => {
     const { editor } = useRichTextEditorContext();
     const imageInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,6 +36,8 @@ const ImageControl = () => {
                     alt: image.alt,
                     width: image.width,
                     height: image.height,
+                    [scalableImageComponentDataAttributes.DATA_RESPONSIVE]:
+                        isResponsive ? 'true' : 'false',
                 },
             })
             .focus()
@@ -42,6 +49,7 @@ const ImageControl = () => {
             onClick={handleUpload}
             aria-label='Insert image'
             title='Insert image'
+            {...props}
         >
             <IconPhotoPlus stroke={1.5} size={16} />
             <input
