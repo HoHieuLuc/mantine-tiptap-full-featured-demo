@@ -17,9 +17,9 @@ const RTE = () => {
         ],
         content: `
             <p>resizable image with responsive style</p>
-            <img src="/nails.png" data-image-component='true' data-responsive='true' />
+            <img src="/NAILS.png" data-image-component='true' data-responsive='true' />
             <p>normal resizable image</p>
-            <img src="/nails.png" width="300" height="200" data-image-component='true' />
+            <img src="/NAILS.png" width="300" height="200" data-image-component='true' />
         `,
     });
     const [showHtml, { toggle }] = useDisclosure();
