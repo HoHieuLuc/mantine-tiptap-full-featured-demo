@@ -1,7 +1,7 @@
 # Mantine tiptap full featured example (WIP)
 ## Features
 - Resizable image:
-    - Responsive style with `object-fit: scale-down` and `width: 100%`
+    - Responsive style with `object-fit: contain` and `width: 100%`
 - ...
 
 ## Known Issues
