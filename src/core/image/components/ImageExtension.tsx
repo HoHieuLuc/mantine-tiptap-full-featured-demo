@@ -56,12 +56,8 @@ export default Node.create<ImageNodeViewOptions>({
             {
                 tag: 'img',
                 getAttrs: (element) => {
-                    if (typeof element !== 'string') {
-                        return (
-                            element.hasAttribute('data-image-component') && null
-                        );
-                    }
-                    return false;
+                    if (typeof element === 'string') return false;
+                    return element.hasAttribute('data-image-component') && null;
                 },
             },
         ];

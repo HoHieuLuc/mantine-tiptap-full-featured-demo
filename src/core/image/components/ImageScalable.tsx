@@ -2,8 +2,11 @@ import { Box, Image } from '@mantine/core';
 import { useClickOutside } from '@mantine/hooks';
 import { NodeViewRendererProps, NodeViewWrapper } from '@tiptap/react';
 import { useState } from 'react';
-import Moveable from 'react-moveable';
+import { makeMoveable, Scalable, ScalableProps } from 'react-moveable';
 import { scalableImageComponentDataAttributes } from './ImageExtension';
+import ImagePopover from './ImagePopover';
+
+const Moveable = makeMoveable<ScalableProps>([Scalable]);
 
 interface Props extends NodeViewRendererProps {
     updateAttributes({
@@ -28,7 +31,7 @@ const ImageScalable = (props: Props) => {
     return (
         <Box
             component={NodeViewWrapper}
-            className='container image-component'
+            className='image-component'
             pos='relative'
             data-drag-handle
             sx={{
@@ -36,17 +39,32 @@ const ImageScalable = (props: Props) => {
                 height: height,
             }}
         >
-            <Image
-                {...props.node.attrs}
-                imageProps={{
-                    width: width,
-                    height: height,
-                }}
-                withPlaceholder
-                ref={imageRef}
-                onClick={() => setIsImageFocused(true)}
-                fit='fill'
-            />
+            <ImagePopover
+                opened={isImageFocused}
+                positionDependencies={[width, height]}
+            >
+                <Image
+                    {...props.node.attrs}
+                    imageProps={{
+                        width: width,
+                        height: height,
+                    }}
+                    withPlaceholder
+                    ref={imageRef}
+                    onClick={() => setIsImageFocused(true)}
+                    fit='fill'
+                />
+            </ImagePopover>
+            {isImageFocused && (
+                <Image
+                    {...props.node.attrs}
+                    withPlaceholder
+                    pos='absolute'
+                    top={0}
+                    opacity={0.3}
+                    fit='fill'
+                />
+            )}
             <Moveable
                 target={isImageFocused ? imageRef : null}
                 scalable={true}
@@ -60,8 +78,8 @@ const ImageScalable = (props: Props) => {
                 renderDirections={['se']}
                 snappable={true}
                 bounds={{
-                    left: 0,
-                    top: 0,
+                    left: 10,
+                    top: 10,
                     position: 'css',
                 }}
                 onScale={(e) => {
