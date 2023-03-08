@@ -1,17 +1,15 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
+import { ScalableImageOptions } from '../image.type';
+import { calculateImageSize } from '../utils/calculate-image-size';
 import ImageScalable from './ImageScalable';
 
-export const scalableImageComponentDataAttributes = {
+export const scalableImageDataAttributes = {
     DATA_RESPONSIVE: 'data-responsive',
     DATA_IMAGE_COMPONENT: 'data-image-component',
 };
 
-interface ImageNodeViewOptions {
-    HTMLAttributes: Record<string, unknown>;
-}
-
-export default Node.create<ImageNodeViewOptions>({
+export default Node.create<ScalableImageOptions>({
     name: 'imageComponent',
     group: 'inline',
     inline: true,
@@ -21,6 +19,11 @@ export default Node.create<ImageNodeViewOptions>({
     addOptions() {
         return {
             HTMLAttributes: {},
+            defaultHeight: 200,
+            defaultWidth: 200,
+            useImageSize: false,
+            maxWidth: 16384,
+            maxHeight: 16384,
         };
     },
 
@@ -33,19 +36,19 @@ export default Node.create<ImageNodeViewOptions>({
                 default: '',
             },
             width: {
-                default: 200,
+                default: this.options.defaultWidth,
             },
             height: {
-                default: 200,
+                default: this.options.defaultHeight,
             },
-            [scalableImageComponentDataAttributes.DATA_RESPONSIVE]: {
+            [scalableImageDataAttributes.DATA_RESPONSIVE]: {
                 parseHTML: (element) =>
                     element.getAttribute(
-                        scalableImageComponentDataAttributes.DATA_RESPONSIVE
+                        scalableImageDataAttributes.DATA_RESPONSIVE
                     ),
                 default: 'false',
             },
-            [scalableImageComponentDataAttributes.DATA_IMAGE_COMPONENT]: {
+            [scalableImageDataAttributes.DATA_IMAGE_COMPONENT]: {
                 default: 'true',
             },
         };
@@ -57,7 +60,9 @@ export default Node.create<ImageNodeViewOptions>({
                 tag: 'img',
                 getAttrs: (element) => {
                     if (typeof element === 'string') return false;
-                    return element.hasAttribute('data-image-component') && null;
+                    return element.hasAttribute(
+                        scalableImageDataAttributes.DATA_IMAGE_COMPONENT
+                    ) && null;
                 },
             },
         ];
@@ -68,7 +73,8 @@ export default Node.create<ImageNodeViewOptions>({
             'span',
             {
                 class: 'node-imageComponent',
-                [scalableImageComponentDataAttributes.DATA_IMAGE_COMPONENT]: 'true',
+                [scalableImageDataAttributes.DATA_IMAGE_COMPONENT]:
+                    'true',
             },
             [
                 'img',
@@ -76,7 +82,7 @@ export default Node.create<ImageNodeViewOptions>({
                     this.options.HTMLAttributes,
                     HTMLAttributes,
                     HTMLAttributes[
-                        scalableImageComponentDataAttributes.DATA_RESPONSIVE
+                        scalableImageDataAttributes.DATA_RESPONSIVE
                     ] === 'true'
                         ? {
                             style:
@@ -84,12 +90,41 @@ export default Node.create<ImageNodeViewOptions>({
                                 `height: ${
                                     HTMLAttributes.height as number
                                 }px;` +
-                                `object-fit: scale-down;`,
+                                `object-fit: contain;`,
                         }
                         : {}
                 ),
             ],
         ];
+    },
+
+    addCommands() {
+        return {
+            setScalableImage:
+                (options) => ({ commands }) => {
+                    const { width, height } = options;
+                    const { defaultWidth, defaultHeight, maxWidth, maxHeight } = this.options;
+                    const _width = width || defaultWidth;
+                    const _height = height || defaultHeight;
+                    const [newWidth, newHeight] = calculateImageSize({
+                        width: _width,
+                        height: _height,
+                        maxWidth,
+                        maxHeight,
+                    });
+                    return commands.insertContentAt(
+                        this.editor.state.selection.head,
+                        {
+                            type: this.name,
+                            attrs: {
+                                ...options,
+                                width: newWidth,
+                                height: newHeight,
+                            },
+                        }
+                    );
+                },
+        };
     },
 
     addNodeView() {

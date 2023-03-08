@@ -1,8 +1,11 @@
-import { RichTextEditor, RichTextEditorControlProps, useRichTextEditorContext } from '@mantine/tiptap';
+import {
+    RichTextEditor,
+    RichTextEditorControlProps,
+    useRichTextEditorContext,
+} from '@mantine/tiptap';
 import { IconPhotoPlus } from '@tabler/icons-react';
 import { useRef } from 'react';
 import imageService from '../image.service';
-import { scalableImageComponentDataAttributes } from './ImageExtension';
 
 interface Props extends RichTextEditorControlProps {
     isResponsive?: boolean;
@@ -24,23 +27,19 @@ const ImageControl = ({ isResponsive = true, ...props }: Props) => {
             return;
         }
         const image = new Image();
-        const base64 = await imageService.upload(file);
-        image.src = base64;
+        const imageUrl = await imageService.upload(file);
+        image.src = imageUrl;
         await image.decode();
         editor
             .chain()
-            .insertContentAt(editor.state.selection.head, {
-                type: 'imageComponent',
-                attrs: {
-                    src: base64,
-                    alt: image.alt,
-                    width: image.width,
-                    height: image.height,
-                    [scalableImageComponentDataAttributes.DATA_RESPONSIVE]:
-                        isResponsive ? 'true' : 'false',
-                },
-            })
             .focus()
+            .setScalableImage({
+                src: imageUrl,
+                alt: image.alt,
+                width: image.width,
+                height: image.height,
+                'data-responsive': isResponsive ? 'true' : 'false',
+            })
             .run();
     };
 
