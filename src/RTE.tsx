@@ -42,7 +42,10 @@ const RTE = () => {
     const editor = useEditor({
         extensions: [
             StarterKit,
-            Image.Extension,
+            Image.Extension.configure({
+                maxWidth: 500,
+                maxHeight: 500,
+            }),
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
         ],
         content: exampleHtml,
