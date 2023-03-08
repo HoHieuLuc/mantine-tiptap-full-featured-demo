@@ -1,5 +1,10 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
+import {
+    ColorScheme,
+    ColorSchemeProvider,
+    MantineProvider,
+} from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
+import { ModalsProvider } from '@mantine/modals';
 import React from 'react';
 
 interface Props {
@@ -18,9 +23,16 @@ function ThemeProvider({ children }: Props) {
     };
 
     return (
-        <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-            <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                {children}
+        <ColorSchemeProvider
+            colorScheme={colorScheme}
+            toggleColorScheme={toggleColorScheme}
+        >
+            <MantineProvider
+                theme={{ colorScheme }}
+                withGlobalStyles
+                withNormalizeCSS
+            >
+                <ModalsProvider>{children}</ModalsProvider>
             </MantineProvider>
         </ColorSchemeProvider>
     );
