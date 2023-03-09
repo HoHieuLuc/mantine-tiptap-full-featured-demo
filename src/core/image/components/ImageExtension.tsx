@@ -16,12 +16,11 @@ export default Node.create<ScalableImageOptions>({
     atom: true,
     draggable: true,
 
-    addOptions() {
+    addOptions(): ScalableImageOptions {
         return {
             HTMLAttributes: {},
             defaultHeight: 200,
             defaultWidth: 200,
-            useImageSize: false,
             maxWidth: 16384,
             maxHeight: 16384,
         };
@@ -33,6 +32,9 @@ export default Node.create<ScalableImageOptions>({
                 default: '',
             },
             alt: {
+                default: '',
+            },
+            title: {
                 default: '',
             },
             width: {
@@ -47,9 +49,6 @@ export default Node.create<ScalableImageOptions>({
                         scalableImageDataAttributes.DATA_RESPONSIVE
                     ),
                 default: 'false',
-            },
-            [scalableImageDataAttributes.DATA_IMAGE_COMPONENT]: {
-                default: 'true',
             },
         };
     },

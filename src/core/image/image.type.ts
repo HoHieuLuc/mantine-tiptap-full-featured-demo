@@ -11,6 +11,7 @@ export interface ScalableImageOptions {
 export interface ScalableImageAttrs {
     src: string;
     alt?: string;
+    title?: string;
     width?: number;
     height?: number;
     'data-responsive'?: 'true' | 'false',
@@ -21,9 +22,16 @@ type Node = NodeViewRendererProps['node'] & {
     attrs: ScalableImageAttrs;
 };
 
+type NodeViewRendererPropsExtension = NodeViewRendererProps['extension'];
+
+interface Extension extends NodeViewRendererPropsExtension {
+    options: ScalableImageOptions;
+}
+
 export interface ScalableImageNodeViewRenderedProps extends NodeViewRendererProps {
     updateAttributes(attrs: Partial<ScalableImageAttrs>): void;
     node: Node;
+    extension: Extension;
 }
 
 declare module '@tiptap/core' {
@@ -33,5 +41,3 @@ declare module '@tiptap/core' {
         }
     }
 }
-
-export { };

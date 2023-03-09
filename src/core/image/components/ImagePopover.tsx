@@ -2,12 +2,14 @@ import { ActionIcon, Popover, PopoverProps } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import { openModal } from '@mantine/modals';
 import ImageSettingsModal from './ImageSettingsModal';
+import { ScalableImageNodeViewRenderedProps } from '../image.type';
 
 interface Props extends PopoverProps {
     children: React.ReactNode;
+    nodeViewRenderedProps: ScalableImageNodeViewRenderedProps;
 }
 
-const ImagePopover = ({ children, ...props }: Props) => {
+const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {
     return (
         <Popover
             withinPortal
@@ -29,9 +31,10 @@ const ImagePopover = ({ children, ...props }: Props) => {
                     onClick={() =>
                         openModal({
                             title: 'Image Settings',
-                            children: <ImageSettingsModal />,
+                            children: <ImageSettingsModal {...nodeViewRenderedProps} />,
                             withinPortal: true,
                             centered: true,
+                            size: 'lg'
                         })
                     }
                 >

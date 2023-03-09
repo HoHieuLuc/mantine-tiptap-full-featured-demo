@@ -5,7 +5,7 @@ interface Params {
     maxHeight: number;
 }
 
-/** Calculate new image size respect ratio */
+/** Calculate new image size respect ratio based on max width and max height */
 export const calculateImageSize = ({ width, height, maxWidth, maxHeight }: Params) => {
     if (width <= maxWidth && height <= maxHeight) {
         return [width, height];

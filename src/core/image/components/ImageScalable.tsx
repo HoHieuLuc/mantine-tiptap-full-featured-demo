@@ -28,7 +28,7 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                 height,
             }}
         >
-            <ImagePopover opened={isImageFocused}>
+            <ImagePopover opened={isImageFocused} nodeViewRenderedProps={props}>
                 <Image
                     {...props.node.attrs}
                     imageProps={{
@@ -38,7 +38,7 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                     withPlaceholder
                     ref={imageRef}
                     onClick={() => setIsImageFocused(true)}
-                    fit='fill'
+                    fit='contain'
                 />
             </ImagePopover>
             {isImageFocused && (

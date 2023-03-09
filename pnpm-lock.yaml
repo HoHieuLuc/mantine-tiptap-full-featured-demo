@@ -4,6 +4,7 @@ specifiers:
   '@babel/core': ^7.21.0
   '@emotion/react': ^11.10.6
   '@mantine/core': ^6.0.1
+  '@mantine/form': ^6.0.1
   '@mantine/hooks': ^6.0.1
   '@mantine/modals': ^6.0.1
   '@mantine/notifications': ^6.0.1
@@ -53,6 +54,7 @@ specifiers:
 dependencies:
   '@emotion/react': 11.10.6_pmekkgnqduwlme35zpnqhenc34
   '@mantine/core': 6.0.1_7atxah5aiy65tdrz25o24k4n44
+  '@mantine/form': 6.0.1_react@18.2.0
   '@mantine/hooks': 6.0.1_react@18.2.0
   '@mantine/modals': 6.0.1_hdfbaha3esn2nmwxggs2gvheiu
   '@mantine/notifications': 6.0.1_hdfbaha3esn2nmwxggs2gvheiu
@@ -1005,6 +1007,16 @@ packages:
     transitivePeerDependencies:
       - '@emotion/react'
       - '@types/react'
+    dev: false
+
+  /@mantine/form/6.0.1_react@18.2.0:
+    resolution: {integrity: sha512-oRoe6YnurOzAGUY1DGXTFLofWPEeE8prEdwOv3pJEsp4ggaZAaQQSivIla5yzcsQasptOxMr2Gb8AOk4Ch/WHg==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      fast-deep-equal: 3.1.3
+      klona: 2.0.6
+      react: 18.2.0
     dev: false
 
   /@mantine/hooks/6.0.1_react@18.2.0:
@@ -4411,6 +4423,11 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
     dev: true
+
+  /klona/2.0.6:
+    resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
+    engines: {node: '>= 8'}
+    dev: false
 
   /leven/3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
