@@ -7,6 +7,7 @@ import {
     TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { modals } from '@mantine/modals';
 import { ScalableImageNodeViewRenderedProps } from '../image.type';
 
 const ImageSettingsModal = ({
@@ -54,7 +55,7 @@ const ImageSettingsModal = ({
                     label='Alternative description'
                     {...form.getInputProps('alt')}
                 />
-                <Group align='center'>
+                <Group align='center' noWrap>
                     <NumberInput
                         label='Width'
                         {...form.getInputProps('width')}
@@ -71,7 +72,11 @@ const ImageSettingsModal = ({
                     />
                 </Group>
                 <Group position='right'>
-                    <Button color='gray' type='button'>
+                    <Button
+                        color='gray'
+                        type='button'
+                        onClick={() => modals.close('image-settings')}
+                    >
                         Cancel
                     </Button>
                     <Button type='submit'>Save</Button>

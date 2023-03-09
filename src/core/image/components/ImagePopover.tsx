@@ -31,10 +31,11 @@ const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {
                     onClick={() =>
                         openModal({
                             title: 'Image Settings',
+                            modalId: 'image-settings',
                             children: <ImageSettingsModal {...nodeViewRenderedProps} />,
                             withinPortal: true,
                             centered: true,
-                            size: 'lg'
+                            size: 'lg',
                         })
                     }
                 >
