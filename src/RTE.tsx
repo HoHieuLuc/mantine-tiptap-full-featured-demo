@@ -14,7 +14,8 @@ const exampleHtml = /* html */ `
     <p style="text-align: center;">
         <span class="node-imageComponent" data-image-component="true">
             <img src="/NAILS.png"
-                alt="" 
+                alt="test alt"
+                title="responsive image"
                 width="200" 
                 height="200"
                 data-responsive="true"
