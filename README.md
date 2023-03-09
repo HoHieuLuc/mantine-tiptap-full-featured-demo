@@ -6,3 +6,4 @@
 
 ## Known Issues
 - No tests :(
+- Tree shaking doesn't work
