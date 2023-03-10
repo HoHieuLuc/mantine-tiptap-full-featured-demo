@@ -38,6 +38,7 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                     withPlaceholder
                     ref={imageRef}
                     onClick={() => setIsImageFocused(true)}
+                    opacity={isImageFocused ? 0.3 : 1}
                     fit={props.node.attrs['data-responsive'] === 'true' ? 'contain' : 'fill'}
                 />
             </ImagePopover>
@@ -47,7 +48,6 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                     withPlaceholder
                     pos='absolute'
                     top={0}
-                    opacity={0.3}
                     fit={props.node.attrs['data-responsive'] === 'true' ? 'contain' : 'fill'}
                 />
             )}

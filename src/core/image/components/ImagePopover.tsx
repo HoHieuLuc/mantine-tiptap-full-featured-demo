@@ -1,4 +1,4 @@
-import { ActionIcon, Popover, PopoverProps } from '@mantine/core';
+import { Button, Popover, PopoverProps } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import { openModal } from '@mantine/modals';
 import ImageSettingsModal from './ImageSettingsModal';
@@ -13,7 +13,7 @@ const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {
     return (
         <Popover
             withinPortal
-            position='right'
+            position='bottom'
             styles={{
                 dropdown: {
                     background: 'none',
@@ -25,7 +25,7 @@ const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {
         >
             <Popover.Target>{children}</Popover.Target>
             <Popover.Dropdown>
-                <ActionIcon
+                <Button
                     variant='filled'
                     color='blue'
                     onClick={() =>
@@ -38,9 +38,10 @@ const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {
                             size: 'lg',
                         })
                     }
+                    leftIcon={<IconSettings />}
                 >
-                    <IconSettings />
-                </ActionIcon>
+                    Settings
+                </Button>
             </Popover.Dropdown>
         </Popover>
     );

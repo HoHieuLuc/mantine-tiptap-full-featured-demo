@@ -84,14 +84,17 @@ export default Node.create<ScalableImageOptions>({
                         scalableImageDataAttributes.DATA_RESPONSIVE
                     ] === 'true'
                         ? {
-                            style:
-                                `width: 100%;` +
-                                `height: ${
-                                    HTMLAttributes.height as number
-                                }px;` +
-                                `object-fit: contain;`,
+                            style:`width: 100%;
+                                height: auto;
+                                object-fit: contain;
+                                max-width: ${HTMLAttributes.width as number}px;`
                         }
-                        : {}
+                        : {
+                            // style: 
+                            //     `width: ${HTMLAttributes.width as number}px;` +
+                            //     `max-width: 100%;` +
+                            //     `max-height: ${HTMLAttributes.height as number}px;`,
+                        },
                 ),
             ],
         ];
