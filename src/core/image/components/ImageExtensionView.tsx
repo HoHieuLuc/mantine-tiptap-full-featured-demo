@@ -11,11 +11,13 @@ const Moveable = makeMoveable<ScalableProps>([Scalable]);
 const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
     const [isImageFocused, setIsImageFocused] = useState(false);
     const imageRef = useClickOutside<HTMLDivElement>(() => setIsImageFocused(false));
+    
     const width = props.node.attrs.width;
     const height = props.node.attrs.height;
     const isResponsive = props.node.attrs['data-responsive'];
     const sharedImageProps: ImageProps = {
         ...props.node.attrs,
+        width: isResponsive ? '100%' : width,
         height: isResponsive ? 'auto' : height,
         imageProps: {
             width,
@@ -24,6 +26,11 @@ const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
         },
         withPlaceholder: true,
         fit: isResponsive ? 'contain' : 'fill',
+        styles: {
+            imageWrapper: {
+                maxWidth: width || props.extension.options.maxWidth,
+            },
+        },
     };
 
     return (
