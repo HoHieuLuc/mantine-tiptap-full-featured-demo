@@ -1,35 +1,39 @@
+import { Attribute } from '@tiptap/core';
 import { NodeViewRendererProps } from '@tiptap/react';
 
-export interface ScalableImageOptions {
+export interface ImageExtensionOptions {
     HTMLAttributes: Record<string, unknown>;
     defaultWidth: number;
     defaultHeight: number;
     maxWidth: number;
     maxHeight: number;
+    classes: Array<string>;
 }
 
-export interface ScalableImageAttrs {
+export interface ImageExtensionAttrs {
     src: string;
     alt?: string;
     title?: string;
     width?: number;
     height?: number;
-    'data-responsive'?: 'true' | 'false',
-    'data-image-component'?: 'true' | 'false',
+    'data-responsive'?: boolean;
+    'data-class'?: string;
 }
 
+export type ImageExtensionAttributes = Record<keyof ImageExtensionAttrs, Attribute> | object;
+
 type Node = NodeViewRendererProps['node'] & {
-    attrs: ScalableImageAttrs;
+    attrs: ImageExtensionAttrs;
 };
 
 type NodeViewRendererPropsExtension = NodeViewRendererProps['extension'];
 
 interface Extension extends NodeViewRendererPropsExtension {
-    options: ScalableImageOptions;
+    options: ImageExtensionOptions;
 }
 
-export interface ScalableImageNodeViewRenderedProps extends NodeViewRendererProps {
-    updateAttributes(attrs: Partial<ScalableImageAttrs>): void;
+export interface ImageExtensionNodeViewRenderedProps extends NodeViewRendererProps {
+    updateAttributes(attrs: Partial<ImageExtensionAttrs>): void;
     node: Node;
     extension: Extension;
 }
@@ -37,7 +41,9 @@ export interface ScalableImageNodeViewRenderedProps extends NodeViewRendererProp
 declare module '@tiptap/core' {
     interface Commands<ReturnType> {
         imageComponent: {
-            setScalableImage(attrs: ScalableImageAttrs): ReturnType;
+            setScalableImage(attrs: ImageExtensionAttrs, position?: number): ReturnType;
         }
     }
 }
+
+export type ImageSettingsForm = Required<ImageExtensionAttrs>;

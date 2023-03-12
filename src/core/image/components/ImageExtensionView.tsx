@@ -3,13 +3,12 @@ import { useClickOutside } from '@mantine/hooks';
 import { NodeViewWrapper } from '@tiptap/react';
 import { useState } from 'react';
 import { makeMoveable, Scalable, ScalableProps } from 'react-moveable';
-import { ScalableImageNodeViewRenderedProps } from '../image.type';
-import { scalableImageDataAttributes } from './ImageExtension';
+import { ImageExtensionNodeViewRenderedProps } from '../image.type';
 import ImagePopover from './ImagePopover';
 
 const Moveable = makeMoveable<ScalableProps>([Scalable]);
 
-const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
+const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
     const [isImageFocused, setIsImageFocused] = useState(false);
     const imageRef = useClickOutside<HTMLDivElement>(() =>
         setIsImageFocused(false)
@@ -23,10 +22,6 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
             className='image-component'
             pos='relative'
             data-drag-handle
-            sx={{
-                width,
-                height,
-            }}
         >
             <ImagePopover opened={isImageFocused} nodeViewRenderedProps={props}>
                 <Image
@@ -34,31 +29,36 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                     imageProps={{
                         width,
                         height,
+                        className: props.node.attrs['data-class'],
                     }}
                     withPlaceholder
                     ref={imageRef}
                     onClick={() => setIsImageFocused(true)}
+                    onDrag={() => setIsImageFocused(true)}
                     opacity={isImageFocused ? 0.3 : 1}
-                    fit={props.node.attrs['data-responsive'] === 'true' ? 'contain' : 'fill'}
+                    fit={
+                        props.node.attrs['data-responsive'] ? 'contain' : 'fill'
+                    }
                 />
             </ImagePopover>
             {isImageFocused && (
                 <Image
                     {...props.node.attrs}
+                    imageProps={{
+                        className: props.node.attrs['data-class'],
+                    }}
                     withPlaceholder
                     pos='absolute'
                     top={0}
-                    fit={props.node.attrs['data-responsive'] === 'true' ? 'contain' : 'fill'}
+                    fit={
+                        props.node.attrs['data-responsive'] ? 'contain' : 'fill'
+                    }
                 />
             )}
             <Moveable
                 target={isImageFocused ? imageRef : null}
                 scalable={true}
-                keepRatio={
-                    props.node.attrs[
-                        scalableImageDataAttributes.DATA_RESPONSIVE
-                    ] === 'true'
-                }
+                keepRatio={props.node.attrs['data-responsive']}
                 origin={false}
                 throttleScale={0}
                 renderDirections={['se']}
@@ -66,6 +66,8 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                 bounds={{
                     left: 10,
                     top: 10,
+                    rigth: 10,
+                    bottom: 10,
                     position: 'css',
                 }}
                 onScale={(e) => {
@@ -73,11 +75,11 @@ const ImageScalable = (props: ScalableImageNodeViewRenderedProps) => {
                 }}
                 onScaleEnd={(e) => {
                     props.updateAttributes({
-                        width: e.target.getBoundingClientRect().width,
-                        height: e.target.getBoundingClientRect().height,
+                        width: e.target.querySelector('img')?.getBoundingClientRect().width,
+                        height: e.target.querySelector('img')?.getBoundingClientRect().height,
                     });
                     e.target.style.transform = '';
-                   
+
                     setIsImageFocused(false);
                 }}
             />

@@ -2,11 +2,11 @@ import { Button, Popover, PopoverProps } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
 import { openModal } from '@mantine/modals';
 import ImageSettingsModal from './ImageSettingsModal';
-import { ScalableImageNodeViewRenderedProps } from '../image.type';
+import { ImageExtensionNodeViewRenderedProps } from '../image.type';
 
 interface Props extends PopoverProps {
     children: React.ReactNode;
-    nodeViewRenderedProps: ScalableImageNodeViewRenderedProps;
+    nodeViewRenderedProps: ImageExtensionNodeViewRenderedProps;
 }
 
 const ImagePopover = ({ children, nodeViewRenderedProps, ...props }: Props) => {

@@ -38,9 +38,16 @@ const ImageControl = ({ isResponsive = true, ...props }: Props) => {
                 alt: image.alt,
                 width: image.width,
                 height: image.height,
-                'data-responsive': isResponsive ? 'true' : 'false',
+                'data-responsive': isResponsive,
             })
             .run();
+    };
+
+    const onInputClick = (
+        event: React.MouseEvent<HTMLInputElement, MouseEvent>
+    ) => {
+        const element = event.target as HTMLInputElement;
+        element.value = '';
     };
 
     return (
@@ -57,6 +64,7 @@ const ImageControl = ({ isResponsive = true, ...props }: Props) => {
                 style={{ display: 'none' }}
                 ref={imageInputRef}
                 onChange={(e) => void onImageInputChange(e)}
+                onClick={onInputClick}
             />
         </RichTextEditor.Control>
     );

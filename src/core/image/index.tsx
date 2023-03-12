@@ -1,6 +1,6 @@
 import ImageControls from './components/ImageControls';
 import ImageExtension from './components/ImageExtension';
-import ImageScalable from './components/ImageScalable';
+import ImageScalable from './components/ImageExtensionView';
 
 const Image = () => <></>;
 

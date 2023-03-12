@@ -1,32 +1,29 @@
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ScalableImageOptions } from '../image.type';
+import {  ImageExtensionAttributes, ImageExtensionAttrs, ImageExtensionOptions } from '../image.type';
 import { calculateImageSize } from '../utils/calculate-image-size';
-import ImageScalable from './ImageScalable';
+import ImageExtensionView from './ImageExtensionView';
+import { Plugin } from '@tiptap/pm/state';
+import imageService from '../image.service';
 
-export const scalableImageDataAttributes = {
-    DATA_RESPONSIVE: 'data-responsive',
-    DATA_IMAGE_COMPONENT: 'data-image-component',
-};
-
-export default Node.create<ScalableImageOptions>({
+export default Node.create<ImageExtensionOptions>({
     name: 'imageComponent',
     group: 'inline',
     inline: true,
-    atom: true,
     draggable: true,
 
-    addOptions(): ScalableImageOptions {
+    addOptions(): ImageExtensionOptions {
         return {
             HTMLAttributes: {},
             defaultHeight: 200,
             defaultWidth: 200,
             maxWidth: 16384,
             maxHeight: 16384,
+            classes: [],
         };
     },
 
-    addAttributes() {
+    addAttributes(): ImageExtensionAttributes {
         return {
             src: {
                 default: '',
@@ -43,26 +40,41 @@ export default Node.create<ScalableImageOptions>({
             height: {
                 default: this.options.defaultHeight,
             },
-            [scalableImageDataAttributes.DATA_RESPONSIVE]: {
+            ['data-responsive']: {
                 parseHTML: (element) =>
-                    element.getAttribute(
-                        scalableImageDataAttributes.DATA_RESPONSIVE
-                    ),
-                default: 'false',
+                    element.getAttribute('data-responsive') === 'true',
+                renderHTML(attributes: ImageExtensionAttrs) {
+                    if (!attributes['data-responsive']) {
+                        return {};
+                    }
+                    return {
+                        style: [
+                            'width: 100%',
+                            'height: auto',
+                            'object-fit: contain',
+                            `max-width: ${attributes.width as number}px`
+                        ].join(';'),
+                    };
+                },
+                default: false,
             },
+            ['data-class']: {
+                parseHTML: (element: HTMLElement) =>
+                    element.getAttribute('class'),
+                renderHTML: (attrs: ImageExtensionAttrs) => {
+                    return {
+                        class: attrs['data-class'],
+                    };
+                },
+                default: '',
+            }
         };
     },
 
     parseHTML() {
         return [
             {
-                tag: 'img',
-                getAttrs: (element) => {
-                    if (typeof element === 'string') return false;
-                    return element.hasAttribute(
-                        scalableImageDataAttributes.DATA_IMAGE_COMPONENT
-                    ) && null;
-                },
+                tag: `img[data-type="${this.name}"]`,
             },
         ];
     },
@@ -72,29 +84,15 @@ export default Node.create<ScalableImageOptions>({
             'span',
             {
                 class: 'node-imageComponent',
-                [scalableImageDataAttributes.DATA_IMAGE_COMPONENT]:
-                    'true',
             },
             [
                 'img',
                 mergeAttributes(
+                    {
+                        ['data-type']: this.name,
+                    },
                     this.options.HTMLAttributes,
                     HTMLAttributes,
-                    HTMLAttributes[
-                        scalableImageDataAttributes.DATA_RESPONSIVE
-                    ] === 'true'
-                        ? {
-                            style:`width: 100%;
-                                height: auto;
-                                object-fit: contain;
-                                max-width: ${HTMLAttributes.width as number}px;`
-                        }
-                        : {
-                            // style: 
-                            //     `width: ${HTMLAttributes.width as number}px;` +
-                            //     `max-width: 100%;` +
-                            //     `max-height: ${HTMLAttributes.height as number}px;`,
-                        },
                 ),
             ],
         ];
@@ -102,34 +100,75 @@ export default Node.create<ScalableImageOptions>({
 
     addCommands() {
         return {
-            setScalableImage:
-                (options) => ({ commands }) => {
-                    const { width, height } = options;
-                    const { defaultWidth, defaultHeight, maxWidth, maxHeight } = this.options;
-                    const _width = width || defaultWidth;
-                    const _height = height || defaultHeight;
-                    const [newWidth, newHeight] = calculateImageSize({
-                        width: _width,
-                        height: _height,
-                        maxWidth,
-                        maxHeight,
-                    });
-                    return commands.insertContentAt(
-                        this.editor.state.selection.head,
-                        {
-                            type: this.name,
-                            attrs: {
-                                ...options,
-                                width: newWidth,
-                                height: newHeight,
-                            },
-                        }
-                    );
-                },
+            setScalableImage: (options, position) => ({ commands }) => {
+                const { width, height } = options;
+                const { defaultWidth, defaultHeight, maxWidth, maxHeight } = this.options;
+                const _width = width || defaultWidth;
+                const _height = height || defaultHeight;
+                const [newWidth, newHeight] = calculateImageSize({
+                    width: _width,
+                    height: _height,
+                    maxWidth,
+                    maxHeight,
+                });
+                return commands.insertContentAt(
+                    position || this.editor.state.selection.head,
+                    {
+                        type: this.name,
+                        attrs: {
+                            ...options,
+                            width: newWidth,
+                            height: newHeight,
+                        },
+                    }
+                );
+            },
         };
     },
 
+    addProseMirrorPlugins() {
+        return [
+            new Plugin({
+                props: {
+                    handlePaste: (_, clipboardEvent, slice) => {
+                        const files = clipboardEvent.clipboardData?.files;
+                        
+                        // handle pasting imageComponent content
+                        if (slice.content.firstChild?.type.name === this.name) {
+                            this.editor.commands.setScalableImage(
+                                slice.content.firstChild.attrs as ImageExtensionAttrs,
+                            );
+                            return true;
+                        }
+
+                        if (!files || files.length === 0) {
+                            return false;
+                        }
+
+                        // handle pasting file contents
+                        for (const file of files) {
+                            void imageService.handleImagePasting(this.editor, file);
+                        }
+                        return true;
+                    },
+                    handleDrop: (_, dragEvent) => {
+                        dragEvent.preventDefault();
+                        const droppedFiles = dragEvent.dataTransfer?.files;
+                        if (!droppedFiles || droppedFiles.length === 0) {
+                            return false;
+                        }
+
+                        for (const file of droppedFiles) {
+                            void imageService.handleImagePasting(this.editor, file);
+                        }
+                        return true;
+                    },
+                }
+            }),
+        ];
+    },
+
     addNodeView() {
-        return ReactNodeViewRenderer(ImageScalable);
+        return ReactNodeViewRenderer(ImageExtensionView);
     },
 });
