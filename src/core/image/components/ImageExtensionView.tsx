@@ -1,4 +1,4 @@
-import { Box, Image } from '@mantine/core';
+import { Box, Image, ImageProps } from '@mantine/core';
 import { useClickOutside } from '@mantine/hooks';
 import { NodeViewWrapper } from '@tiptap/react';
 import { useState } from 'react';
@@ -10,11 +10,21 @@ const Moveable = makeMoveable<ScalableProps>([Scalable]);
 
 const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
     const [isImageFocused, setIsImageFocused] = useState(false);
-    const imageRef = useClickOutside<HTMLDivElement>(() =>
-        setIsImageFocused(false)
-    );
+    const imageRef = useClickOutside<HTMLDivElement>(() => setIsImageFocused(false));
     const width = props.node.attrs.width;
     const height = props.node.attrs.height;
+    const isResponsive = props.node.attrs['data-responsive'];
+    const sharedImageProps: ImageProps = {
+        ...props.node.attrs,
+        height: isResponsive ? 'auto' : height,
+        imageProps: {
+            width,
+            height,
+            className: props.node.attrs['data-class'],
+        },
+        withPlaceholder: true,
+        fit: isResponsive ? 'contain' : 'fill',
+    };
 
     return (
         <Box
@@ -25,40 +35,24 @@ const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
         >
             <ImagePopover opened={isImageFocused} nodeViewRenderedProps={props}>
                 <Image
-                    {...props.node.attrs}
-                    imageProps={{
-                        width,
-                        height,
-                        className: props.node.attrs['data-class'],
-                    }}
-                    withPlaceholder
+                    {...sharedImageProps}
                     ref={imageRef}
                     onClick={() => setIsImageFocused(true)}
                     onDrag={() => setIsImageFocused(true)}
                     opacity={isImageFocused ? 0.3 : 1}
-                    fit={
-                        props.node.attrs['data-responsive'] ? 'contain' : 'fill'
-                    }
                 />
             </ImagePopover>
             {isImageFocused && (
                 <Image
-                    {...props.node.attrs}
-                    imageProps={{
-                        className: props.node.attrs['data-class'],
-                    }}
-                    withPlaceholder
+                    {...sharedImageProps}
                     pos='absolute'
                     top={0}
-                    fit={
-                        props.node.attrs['data-responsive'] ? 'contain' : 'fill'
-                    }
                 />
             )}
             <Moveable
                 target={isImageFocused ? imageRef : null}
                 scalable={true}
-                keepRatio={props.node.attrs['data-responsive']}
+                keepRatio={isResponsive}
                 origin={false}
                 throttleScale={0}
                 renderDirections={['se']}
@@ -66,8 +60,6 @@ const ImageScalable = (props: ImageExtensionNodeViewRenderedProps) => {
                 bounds={{
                     left: 10,
                     top: 10,
-                    rigth: 10,
-                    bottom: 10,
                     position: 'css',
                 }}
                 onScale={(e) => {
