@@ -19,5 +19,18 @@ export const useStyles = createStyles(() => ({
                 justifyContent: 'space-between',
             },
         },
+        'span.node-imageComponent': {
+            height: '100%',
+        },
+        '.border-10px-white': {
+            border: '10px solid white',
+        },
+        '.my-50px': {
+            marginTop: 50,
+            marginBottom: 50,
+        },
+        'img': {
+            marginBottom: 0,
+        },
     },
 }));
