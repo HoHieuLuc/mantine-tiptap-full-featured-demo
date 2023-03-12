@@ -40,7 +40,13 @@ export default Node.create<ImageExtensionOptions>({
             height: {
                 default: this.options.defaultHeight,
             },
-            ['data-responsive']: {
+            'data-original-width': {
+                default: this.options.defaultWidth,
+            },
+            'data-original-height': {
+                default: this.options.defaultHeight,
+            },
+            'data-responsive': {
                 parseHTML: (element) =>
                     element.getAttribute('data-responsive') === 'true',
                 renderHTML(attributes: ImageExtensionAttrs) {
@@ -58,7 +64,7 @@ export default Node.create<ImageExtensionOptions>({
                 },
                 default: false,
             },
-            ['data-class']: {
+            'data-class': {
                 parseHTML: (element: HTMLElement) =>
                     element.getAttribute('class'),
                 renderHTML: (attrs: ImageExtensionAttrs) => {
@@ -67,7 +73,7 @@ export default Node.create<ImageExtensionOptions>({
                     };
                 },
                 default: '',
-            }
+            },
         };
     },
 
@@ -157,7 +163,7 @@ export default Node.create<ImageExtensionOptions>({
                         if (!droppedFiles || droppedFiles.length === 0) {
                             return false;
                         }
-
+                        
                         for (const file of droppedFiles) {
                             void imageService.handleImagePasting(this.editor, file);
                         }

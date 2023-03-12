@@ -5,12 +5,13 @@ import {
     ImageExtensionNodeViewRenderedProps,
     ImageSettingsForm,
 } from '../image.type';
+import { calculateImageSize } from '../utils/calculate-image-size';
 import ImageSettingsAdvanced from './ImageSettingsAdvanced';
 import ImageSettingsGeneral from './ImageSettingsGeneral';
 
 const ImageSettingsModal = ({
     node: { attrs },
-    extension,
+    extension: { options },
     updateAttributes,
 }: ImageExtensionNodeViewRenderedProps) => {
     const form = useForm<ImageSettingsForm>({
@@ -18,14 +19,37 @@ const ImageSettingsModal = ({
             src: attrs.src,
             title: attrs.title || '',
             alt: attrs.alt || '',
-            width: attrs.width || extension.options.defaultWidth,
-            height: attrs.height || extension.options.defaultHeight,
+            width: attrs.width || options.defaultWidth,
+            height: attrs.height || options.defaultHeight,
             'data-responsive': !!attrs['data-responsive'],
             'data-class': attrs['data-class'] || '',
         },
     });
 
     const handleSubmit = (values: typeof form.values) => {
+        const isResponsive = form.values['data-responsive'];
+        if (
+            isResponsive &&
+            attrs['data-original-width'] &&
+            attrs['data-original-height']
+        ) {
+            const [width, height] = calculateImageSize({
+                width: attrs['data-original-width'] || options.defaultWidth,
+                height: attrs['data-original-height'] || options.defaultHeight,
+                maxWidth: form.values.width,
+                maxHeight: form.values.height,
+            });
+            updateAttributes({
+                ...values,
+                width,
+                height,
+            });
+            form.setValues({
+                width,
+                height,
+            });
+            return;
+        }
         updateAttributes(values);
     };
 
@@ -44,7 +68,7 @@ const ImageSettingsModal = ({
                 <Tabs.Panel value='advanced' pt='xs'>
                     <ImageSettingsAdvanced
                         form={form}
-                        imageExtensionOptions={extension.options}
+                        imageExtensionOptions={options}
                     />
                 </Tabs.Panel>
             </Tabs>

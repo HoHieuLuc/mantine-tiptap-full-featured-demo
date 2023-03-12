@@ -39,6 +39,8 @@ const ImageControl = ({ isResponsive = true, ...props }: Props) => {
                 width: image.width,
                 height: image.height,
                 'data-responsive': isResponsive,
+                'data-original-width': image.width,
+                'data-original-height': image.height,
             })
             .run();
     };

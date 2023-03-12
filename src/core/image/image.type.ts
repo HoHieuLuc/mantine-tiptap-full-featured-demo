@@ -18,6 +18,8 @@ export interface ImageExtensionAttrs {
     height?: number;
     'data-responsive'?: boolean;
     'data-class'?: string;
+    'data-original-width'?: number;
+    'data-original-height'?: number;
 }
 
 export type ImageExtensionAttributes = Record<keyof ImageExtensionAttrs, Attribute> | object;
@@ -46,4 +48,9 @@ declare module '@tiptap/core' {
     }
 }
 
-export type ImageSettingsForm = Required<ImageExtensionAttrs>;
+export type ImageSettingsForm = Required<
+    Omit<
+        ImageExtensionAttrs,
+        'data-original-width' | 'data-original-height'
+    >
+>;

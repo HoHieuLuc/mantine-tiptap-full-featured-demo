@@ -24,6 +24,8 @@ const handleImagePasting = async (editor: Editor, file: File, position?: number)
                 width: image.width,
                 height: image.height,
                 'data-responsive': true,
+                'data-original-width': image.width,
+                'data-original-height': image.height,
             },
             position,
         )
