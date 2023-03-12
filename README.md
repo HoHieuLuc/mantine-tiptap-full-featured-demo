@@ -1,7 +1,9 @@
 # Mantine tiptap full featured example (WIP)
 ## Features
 - Resizable image:
-    - Support responsive image
+    - Responsive style
+    - Custom class
+    - Drag and drop
 - ...
 
 ## Known Issues
